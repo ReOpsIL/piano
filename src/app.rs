@@ -68,6 +68,13 @@ impl eframe::App for PianoApp {
             }
         }
 
+        // Set white background color scheme
+        ctx.set_visuals(egui::Visuals {
+            dark_mode: false,
+            override_text_color: Some(egui::Color32::BLACK),
+            ..egui::Visuals::light()
+        });
+
         // Main application UI
         egui::CentralPanel::default().show(ctx, |ui| {
             ui.heading("Piano Sight Reading");
@@ -109,18 +116,33 @@ impl eframe::App for PianoApp {
             
             ui.separator();
             
-            // Music notation area
-            let notation_rect = ui.available_rect_before_wrap();
-            if notation_rect.height() > 200.0 {
-                let notation_response = ui.allocate_rect(
-                    egui::Rect::from_min_size(
-                        notation_rect.min,
-                        egui::Vec2::new(notation_rect.width(), 300.0)
-                    ),
-                    egui::Sense::hover()
-                );
-                
-                self.notation_renderer.render(ui, notation_response.rect, &self.game_engine);
+            // Music notation area with scroll
+            let available_rect = ui.available_rect_before_wrap();
+            let notation_height = available_rect.height() - 100.0; // Leave space for controls
+            
+            if notation_height > 200.0 {
+                egui::ScrollArea::vertical()
+                    .max_height(notation_height)
+                    .show(ui, |ui| {
+                        // Allocate space for multiple staff systems
+                        let content_height = self.notation_renderer.calculate_content_height(&self.game_engine);
+                        let notation_response = ui.allocate_rect(
+                            egui::Rect::from_min_size(
+                                ui.cursor().min,
+                                egui::Vec2::new(available_rect.width() - 20.0, content_height)
+                            ),
+                            egui::Sense::hover()
+                        );
+                        
+                        // Fill background with white
+                        ui.painter().rect_filled(
+                            notation_response.rect,
+                            0.0,
+                            egui::Color32::WHITE
+                        );
+                        
+                        self.notation_renderer.render(ui, notation_response.rect, &self.game_engine);
+                    });
             }
             
             ui.separator();

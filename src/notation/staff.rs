@@ -44,37 +44,27 @@ impl Staff {
     }
     
     fn draw_clef_symbol(&self, painter: &Painter) {
-        let clef_x = self.position.x + 10.0;
+        let clef_x = self.position.x + 15.0;
         let center_y = self.position.y + 2.0 * self.line_spacing;
         
         match self.clef {
             Clef::Treble => {
-                // Simplified treble clef representation
-                painter.circle_filled(
-                    Pos2::new(clef_x, center_y),
-                    8.0,
-                    Color32::BLACK,
-                );
+                // Draw treble clef symbol
                 painter.text(
-                    Pos2::new(clef_x - 4.0, center_y - 6.0),
+                    Pos2::new(clef_x, center_y - 6.0),
                     egui::Align2::CENTER_CENTER,
                     "𝄞",
-                    egui::FontId::proportional(20.0),
+                    egui::FontId::proportional(32.0),
                     Color32::BLACK,
                 );
             }
             Clef::Bass => {
-                // Simplified bass clef representation
-                painter.circle_filled(
-                    Pos2::new(clef_x, center_y),
-                    8.0,
-                    Color32::BLACK,
-                );
+                // Draw bass clef symbol
                 painter.text(
-                    Pos2::new(clef_x - 4.0, center_y - 6.0),
+                    Pos2::new(clef_x, center_y - 6.0),
                     egui::Align2::CENTER_CENTER,
                     "𝄢",
-                    egui::FontId::proportional(20.0),
+                    egui::FontId::proportional(32.0),
                     Color32::BLACK,
                 );
             }
@@ -94,5 +84,17 @@ impl Staff {
                 middle_c_y - ((midi_note as f32 - 60.0) * self.line_spacing / 2.0)
             }
         }
+    }
+    
+    pub fn get_staff_top(&self) -> f32 {
+        self.position.y
+    }
+    
+    pub fn get_staff_bottom(&self) -> f32 {
+        self.position.y + 4.0 * self.line_spacing
+    }
+    
+    pub fn get_line_spacing(&self) -> f32 {
+        self.line_spacing
     }
 }
