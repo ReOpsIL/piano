@@ -118,51 +118,84 @@ impl Note {
     
     fn draw_ledger_lines(&self, painter: &Painter, x: f32, y: f32, staff_top: f32, staff_bottom: f32, line_spacing: f32, color: Color32) {
         let stroke = Stroke::new(1.0, color);
-        let ledger_line_length = 16.0; // Length of ledger lines
+        let ledger_line_length = 18.0; // Slightly longer than note head
         let ledger_half_length = ledger_line_length / 2.0;
         
-        // Check if note is above the staff (needs ledger lines above)
-        if y < staff_top {
-            // Calculate how many ledger lines above the staff we need
-            let distance_above = staff_top - y;
-            let lines_needed = ((distance_above / line_spacing) + 0.5) as i32;
-            
-            // Draw ledger lines above the staff
-            for i in 1..=lines_needed {
-                let ledger_y = staff_top - (i as f32 * line_spacing);
-                // Only draw ledger line if the note is close to this line
-                if (y - ledger_y).abs() < line_spacing / 4.0 {
-                    painter.line_segment(
-                        [
-                            Pos2::new(x - ledger_half_length, ledger_y),
-                            Pos2::new(x + ledger_half_length, ledger_y),
-                        ],
-                        stroke,
-                    );
-                }
+        // Determine if note is above or below staff
+        if y < staff_top - line_spacing / 4.0 {
+            // Note is above the staff - draw ledger lines above
+            self.draw_ledger_lines_above(painter, x, y, staff_top, line_spacing, ledger_half_length, stroke);
+        } else if y > staff_bottom + line_spacing / 4.0 {
+            // Note is below the staff - draw ledger lines below  
+            self.draw_ledger_lines_below(painter, x, y, staff_bottom, line_spacing, ledger_half_length, stroke);
+        }
+        // If note is within staff range, no ledger lines needed
+    }
+    
+    fn draw_ledger_lines_above(&self, painter: &Painter, x: f32, note_y: f32, staff_top: f32, line_spacing: f32, ledger_half_length: f32, stroke: Stroke) {
+        // Calculate the first ledger line position above the staff
+        let first_ledger_y = staff_top - line_spacing;
+        
+        // Find which ledger line position the note is closest to
+        let mut current_ledger_y = first_ledger_y;
+        
+        // Continue drawing ledger lines until we've covered the note's position
+        while current_ledger_y >= note_y - line_spacing {
+            // Check if we need a ledger line at this position
+            if self.note_requires_ledger_line_at(note_y, current_ledger_y, line_spacing) {
+                painter.line_segment(
+                    [
+                        Pos2::new(x - ledger_half_length, current_ledger_y),
+                        Pos2::new(x + ledger_half_length, current_ledger_y),
+                    ],
+                    stroke,
+                );
             }
+            current_ledger_y -= line_spacing;
+        }
+    }
+    
+    fn draw_ledger_lines_below(&self, painter: &Painter, x: f32, note_y: f32, staff_bottom: f32, line_spacing: f32, ledger_half_length: f32, stroke: Stroke) {
+        // Calculate the first ledger line position below the staff
+        let first_ledger_y = staff_bottom + line_spacing;
+        
+        // Find which ledger line position the note is closest to
+        let mut current_ledger_y = first_ledger_y;
+        
+        // Continue drawing ledger lines until we've covered the note's position
+        while current_ledger_y <= note_y + line_spacing {
+            // Check if we need a ledger line at this position
+            if self.note_requires_ledger_line_at(note_y, current_ledger_y, line_spacing) {
+                painter.line_segment(
+                    [
+                        Pos2::new(x - ledger_half_length, current_ledger_y),
+                        Pos2::new(x + ledger_half_length, current_ledger_y),
+                    ],
+                    stroke,
+                );
+            }
+            current_ledger_y += line_spacing;
+        }
+    }
+    
+    fn note_requires_ledger_line_at(&self, note_y: f32, ledger_y: f32, line_spacing: f32) -> bool {
+        let half_space = line_spacing / 2.0;
+        let tolerance = line_spacing / 8.0; // Small tolerance for floating point comparison
+        
+        // Check if note is positioned on this ledger line
+        if (note_y - ledger_y).abs() < tolerance {
+            return true;
         }
         
-        // Check if note is below the staff (needs ledger lines below)
-        if y > staff_bottom {
-            // Calculate how many ledger lines below the staff we need
-            let distance_below = y - staff_bottom;
-            let lines_needed = ((distance_below / line_spacing) + 0.5) as i32;
-            
-            // Draw ledger lines below the staff
-            for i in 1..=lines_needed {
-                let ledger_y = staff_bottom + (i as f32 * line_spacing);
-                // Only draw ledger line if the note is close to this line
-                if (y - ledger_y).abs() < line_spacing / 4.0 {
-                    painter.line_segment(
-                        [
-                            Pos2::new(x - ledger_half_length, ledger_y),
-                            Pos2::new(x + ledger_half_length, ledger_y),
-                        ],
-                        stroke,
-                    );
-                }
-            }
+        // Check if note is in the space immediately above or below this ledger line
+        // Notes in spaces also need the bounding ledger lines
+        let space_above = ledger_y - half_space;
+        let space_below = ledger_y + half_space;
+        
+        if (note_y - space_above).abs() < tolerance || (note_y - space_below).abs() < tolerance {
+            return true;
         }
+        
+        false
     }
 }

@@ -20,37 +20,37 @@ pub struct GameEngine {
 
 impl GameEngine {
     pub fn new() -> Self {
-        // Create a longer practice sequence to test multi-system scrolling
+        // Create a test sequence specifically for ledger line testing
         let practice_notes = vec![
-            // System 1
-            Note::new(60, NoteType::Quarter, 0.0),  // C4 (Middle C)
-            Note::new(62, NoteType::Quarter, 1.0),  // D4
-            Note::new(64, NoteType::Quarter, 2.0),  // E4  
-            Note::new(65, NoteType::Quarter, 3.0),  // F4
-            Note::new(67, NoteType::Quarter, 4.0),  // G4
-            Note::new(69, NoteType::Quarter, 5.0),  // A4
-            Note::new(71, NoteType::Quarter, 6.0),  // B4
-            Note::new(72, NoteType::Quarter, 7.0),  // C5
+            // System 1 - Treble clef ledger lines above
+            Note::new(72, NoteType::Quarter, 0.0),  // C5 (first line above treble staff)
+            Note::new(74, NoteType::Quarter, 1.0),  // D5 (space above treble staff)
+            Note::new(76, NoteType::Quarter, 2.0),  // E5 (second line above treble staff)
+            Note::new(77, NoteType::Quarter, 3.0),  // F5 (space)
+            Note::new(79, NoteType::Quarter, 4.0),  // G5 (third line above)
+            Note::new(81, NoteType::Quarter, 5.0),  // A5 (space)
+            Note::new(83, NoteType::Quarter, 6.0),  // B5 (fourth line above)
+            Note::new(84, NoteType::Quarter, 7.0),  // C6 (space)
             
-            // System 2  
-            Note::new(74, NoteType::Quarter, 8.0),  // D5
-            Note::new(76, NoteType::Quarter, 9.0),  // E5
-            Note::new(77, NoteType::Quarter, 10.0), // F5
-            Note::new(79, NoteType::Quarter, 11.0), // G5
-            Note::new(48, NoteType::Quarter, 12.0), // C3 (Bass)
-            Note::new(50, NoteType::Quarter, 13.0), // D3
-            Note::new(52, NoteType::Quarter, 14.0), // E3
-            Note::new(53, NoteType::Quarter, 15.0), // F3
+            // System 2 - Notes on treble staff (no ledger lines needed)
+            Note::new(64, NoteType::Quarter, 8.0),  // E4 (top staff line)
+            Note::new(65, NoteType::Quarter, 9.0),  // F4 (space)
+            Note::new(67, NoteType::Quarter, 10.0), // G4 (line)
+            Note::new(69, NoteType::Quarter, 11.0), // A4 (space)
+            Note::new(71, NoteType::Quarter, 12.0), // B4 (line)
+            Note::new(60, NoteType::Quarter, 13.0), // C4 (Middle C - needs ledger line)
+            Note::new(62, NoteType::Quarter, 14.0), // D4 (space below treble staff)
+            Note::new(59, NoteType::Quarter, 15.0), // B3 (space)
             
-            // System 3
-            Note::new(55, NoteType::Quarter, 16.0), // G3
-            Note::new(57, NoteType::Quarter, 17.0), // A3
-            Note::new(59, NoteType::Quarter, 18.0), // B3
-            Note::new(60, NoteType::Quarter, 19.0), // C4 again
-            Note::new(81, NoteType::Quarter, 20.0), // A5 (high)
-            Note::new(83, NoteType::Quarter, 21.0), // B5 (high)
-            Note::new(84, NoteType::Quarter, 22.0), // C6 (very high)
-            Note::new(36, NoteType::Quarter, 23.0), // C2 (very low)
+            // System 3 - Bass clef notes and ledger lines below
+            Note::new(57, NoteType::Quarter, 16.0), // A3 (top bass staff line)
+            Note::new(55, NoteType::Quarter, 17.0), // G3 (space)
+            Note::new(53, NoteType::Quarter, 18.0), // F3 (line)
+            Note::new(52, NoteType::Quarter, 19.0), // E3 (space)
+            Note::new(50, NoteType::Quarter, 20.0), // D3 (line)
+            Note::new(48, NoteType::Quarter, 21.0), // C3 (bottom bass staff line)
+            Note::new(47, NoteType::Quarter, 22.0), // B2 (first ledger line below bass)
+            Note::new(45, NoteType::Quarter, 23.0), // A2 (space below bass)
         ];
         
         Self {
